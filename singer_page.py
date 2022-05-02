@@ -53,6 +53,6 @@ for i in range(len(data['href'])):
         print()
     except:
         continue
-    information=information.drop_duplicates()
-    information.to_csv("Info.csv", encoding="utf-8-sig")
+information=information.drop_duplicates()
+information.to_csv("Info.csv", encoding="utf-8-sig")
     
