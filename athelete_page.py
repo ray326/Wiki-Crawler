@@ -43,6 +43,55 @@ for i in range(len(data['href'])):
             information.loc[index,'英文名字']="None"
             print("no english name", end=' ')
         information.loc[index,'職業']="運動員"
+
+        tbody=info_box.find('tbody')
+        tr=tbody.find_all('tr')
+        str_spouse=''
+        count=0
+
+        for Tr in tr:
+            if(Tr.th):
+                if(Tr.th.text=='配偶'):
+                    TD=Tr.find('td')
+                    str_spouse=TD.text            
+                    spouse=Tr.find_all('span',{'itemprop':'spouse'})
+                    if(spouse):
+                        for s in spouse:
+                            count+=1
+                    else:
+                        if(str_spouse!=''):
+                            count=1
+        
+        if(count==0):
+            information.loc[index,'婚姻狀態']=0
+            print("單身", end=' ')
+        elif(count==1):
+            marriage=True
+            for j in range(len(str_spouse)):
+                if(str_spouse[j]=='結'):
+                    marriage=True
+                elif(str_spouse[j]=='離'):
+                    marriage=False
+            if(marriage):
+                information.loc[index,'婚姻狀態']=1
+                print("已婚", end=' ')
+            else:
+                information.loc[index,'婚姻狀態']=2
+                print("離婚", end=' ')
+        else:
+            marriage=True
+            for j in range(len(str_spouse)):
+                if(str_spouse[j]=='結'):
+                    marriage=True
+                elif(str_spouse[j]=='離'):
+                    marriage=False
+            if(marriage):
+                information.loc[index,'婚姻狀態']=3
+                print("再婚", end=' ')
+            else:
+                information.loc[index,'婚姻狀態']=2
+                print("離婚", end=' ')
+
         print()
     except:
         continue

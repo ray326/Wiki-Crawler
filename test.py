@@ -2,11 +2,11 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import requests
 import pandas as pd
-response=requests.get("https://zh.wikipedia.org/wiki/%E9%A6%AC%E8%8B%B1%E4%B9%9D")
+response=requests.get("https://zh.wikipedia.org/zh-tw/%E8%94%A3%E4%B9%83%E8%BE%9B")
 html=BeautifulSoup(response.text,'html.parser')
 info_box=html.find('table',{'class':'infobox'})
 name=info_box.find('span',{'class':'fn'})
-spouse=info_box.find_all('span',{'itemprop':'spouse'})
+
 """"
 sup_tag=html.sup.extract()
 
@@ -30,19 +30,46 @@ for j in range(l):
         continue
     else:
         str_name+=temp_name[j]
-tr=info_box.find_all('tr')
+"""
+tbody=info_box.find('tbody')
+tr=tbody.find_all('tr')
+str_spouse=''
+count=0
 for Tr in tr:
     if(Tr.th):  
         if(Tr.th.text=='配偶'):
-            #print(Tr)
-            td=Tr.find('td')
-            #Abbr=td.find_all('abbr')
-            #for abbr in Abbr:
-            #    print(abbr)
-            print(td.text)
-            
+            TD=Tr.find('td')
+            str_spouse=TD.text
+            print(TD.text)            
             spouse=Tr.find_all('span',{'itemprop':'spouse'})
-            for s in spouse:
-                print(s)
-"""            
-            
+            if(spouse):
+                for s in spouse:
+                    count+=1
+            else:
+                if(str_spouse!=''):
+                    count=1
+                                  
+if(count==0):
+    print("單身")
+elif(count==1):
+    marriage=True
+    for j in range(len(str_spouse)):
+        if(str_spouse[j]=='結'):
+            marriage=True
+        elif(str_spouse[j]=='離'):
+            marriage=False
+    if(marriage):
+        print("已婚")
+    else:
+        print("離婚")
+else:
+    marriage=True
+    for j in range(len(str_spouse)):
+        if(str_spouse[j]=='結'):
+            marriage=True
+        elif(str_spouse[j]=='離'):
+            marriage=False
+    if(marriage):
+        print("再婚")
+    else:
+        print("離婚")            

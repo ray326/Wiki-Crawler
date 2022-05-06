@@ -39,7 +39,7 @@ for i in range(len(data['href'])):
         
         index=len(information['姓名'])
         name=info_box.find('span',{'class':'fn'})
-        if(name!=None):
+        if(name):
             temp_name=name.text
             str_name=''
             l=len(name.text)
@@ -48,7 +48,12 @@ for i in range(len(data['href'])):
                     continue
                 else:
                     str_name+=temp_name[j]
-            print(str_name, end=' ')
+            if(str_name==''):
+                information.loc[index,'姓名']=data['name'][i]
+                print(data['name'][i], end=' ')
+            else:
+                information.loc[index,'姓名']=str_name
+                print(str_name, end=' ')
         else:
             information.loc[index,'姓名']=data['name'][i]
             print(data['name'][i], end=' ')
@@ -56,14 +61,57 @@ for i in range(len(data['href'])):
         
         tbody=info_box.find('tbody')
         tr=tbody.find_all('tr')
+
+        str_spouse=''
+        count=0
+
         information.loc[index,'性別']="None"
         for Tr in tr:
             if(Tr.th):
                 if(Tr.th.text=='性别'):
                     print(Tr.td.text, end=' ')
                     information.loc[index,'性別']=Tr.td.text
-                    break
+                elif(Tr.th.text=='配偶'):
+                    TD=Tr.find('td')
+                    str_spouse=TD.text            
+                    spouse=Tr.find_all('span',{'itemprop':'spouse'})
+                    if(spouse):
+                        for s in spouse:
+                            count+=1
+                    else:
+                        if(str_spouse!=''):
+                            count=1
         
+        if(count==0):
+            information.loc[index,'婚姻狀態']=0
+            print("單身", end=' ')
+        elif(count==1):
+            marriage=True
+            for j in range(len(str_spouse)):
+                if(str_spouse[j]=='結'):
+                    marriage=True
+                elif(str_spouse[j]=='離'):
+                    marriage=False
+            if(marriage):
+                information.loc[index,'婚姻狀態']=1
+                print("已婚", end=' ')
+            else:
+                information.loc[index,'婚姻狀態']=2
+                print("離婚", end=' ')
+        else:
+            marriage=True
+            for j in range(len(str_spouse)):
+                if(str_spouse[j]=='結'):
+                    marriage=True
+                elif(str_spouse[j]=='離'):
+                    marriage=False
+            if(marriage):
+                information.loc[index,'婚姻狀態']=3
+                print("再婚", end=' ')
+            else:
+                information.loc[index,'婚姻狀態']=2
+                print("離婚", end=' ')
+
         nickname=info_box.find('td',{'class':'nickname'})
         information.loc[index,'aka']="None"
         if(nickname):
