@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import csv
 
-data=pd.read_csv('Politician.csv')
+data=pd.read_csv('DPP.csv')
 information=pd.DataFrame(columns=["姓名","生日","aka","性別","職業","婚姻狀態"])
 for i in range(len(data['href'])):
     try:
@@ -44,10 +44,12 @@ for i in range(len(data['href'])):
             str_name=''
             l=len(name.text)
             for j in range(l):
-                if(ord(temp_name[j])>=32 and ord(temp_name[j])<=126):
-                    continue
-                else:
+                if('\u4e00' <= temp_name[j] <= '\u9fa5'):
                     str_name+=temp_name[j]
+                elif(temp_name[j]=='·'):
+                    str_name+=temp_name[j]
+                else:
+                    break
             if(str_name==''):
                 information.loc[index,'姓名']=data['name'][i]
                 print(data['name'][i], end=' ')
@@ -124,4 +126,4 @@ for i in range(len(data['href'])):
     except:
         continue
 information=information.drop_duplicates()
-information.to_csv("politician_info.csv", encoding="utf-8-sig")    
+information.to_csv("politician_DPP_info.csv", encoding="utf-8-sig")    
