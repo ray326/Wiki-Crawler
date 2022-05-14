@@ -1,1 +1,0 @@
-https://zh.wikipedia.org/zh-tw/%E8%94%A3%E4%B9%83%E8%BE%9B

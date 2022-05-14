@@ -3,8 +3,7 @@ from urllib.request import urlopen
 import requests
 import pandas as pd
 import csv
-
-data=pd.read_csv('Athelete.csv')
+data=pd.read_csv('./Athelete/Athelete.csv')
 information=pd.DataFrame(columns=["姓名","生日","英文名字","aka","性別","職業","婚姻狀態"])
 
 for i in range(len(data['href'])):
@@ -12,10 +11,10 @@ for i in range(len(data['href'])):
         response=requests.get(data['href'][i])
         html=BeautifulSoup(response.text,'html.parser')
         info_box=html.find('table', {'class':'infobox'})
-        #name=info_box.find('caption')
         bday=info_box.find('span',{'class':'bday'})
         en=info_box.find('span',{'lang':'en'})
         nickname=info_box.find('td', {'class':'nickname'})
+        bodyContent=html.find('div',{'id':'bodyContent'})
         index=len(information['姓名']) 
         information.loc[index,'姓名']=data['name'][i]
         print(data['name'][i],end=' ')
@@ -44,6 +43,23 @@ for i in range(len(data['href'])):
             print("no english name", end=' ')
         information.loc[index,'職業']="運動員"
 
+        bodyContentText=bodyContent.text
+        boy=0
+        for j in range(len(bodyContentText)):
+            if(bodyContentText[j]=='男'):
+                boy+=1
+            elif(bodyContentText[j]=='女'):
+                boy-=1       
+        if(boy>0):
+            print("M", end=' ')
+            information.loc[index,'性別']="M"
+        elif(boy<0):
+            print("F", end=' ')
+            information.loc[index,'性別']="F"
+        else:
+            print("None",end=' ')
+            information.loc[index,'性別']="None" 
+       
         tbody=info_box.find('tbody')
         tr=tbody.find_all('tr')
         str_spouse=''

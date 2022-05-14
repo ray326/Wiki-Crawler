@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import csv
 
-data=pd.read_csv('DPP.csv')
+data=pd.read_csv('NP.csv')
 information=pd.DataFrame(columns=["姓名","生日","aka","性別","職業","婚姻狀態"])
 for i in range(len(data['href'])):
     try:
@@ -21,7 +21,6 @@ for i in range(len(data['href'])):
             continue
         
         bday=info_box.find('span',{'class':'bday'})
-        #print(bday)
         if(bday==None):
             continue
 
@@ -126,4 +125,4 @@ for i in range(len(data['href'])):
     except:
         continue
 information=information.drop_duplicates()
-information.to_csv("politician_DPP_info.csv", encoding="utf-8-sig")    
+information.to_csv("politician_NP_info.csv", encoding="utf-8-sig")    
